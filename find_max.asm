@@ -12,17 +12,21 @@ find_min:
    a_max:
         cmp edi, ecx
         ja end
-        mov edi, ecx
+        mov eax, ecx
         jmp end
 
    b_max:
         cmp esi, ecx
         ja b_end
-        mov edi, ecx
+        mov eax, ecx
+        jmp end
+
+   a_end:
+        mov eax, edi
         jmp end
 
    b_end:
-        mov edi, esi
+        mov eax, esi
         jmp end
 
    end:

@@ -11,18 +11,22 @@ find_min:
 
    a_min:
         cmp edi, ecx
-        jl end
-        mov edi, ecx
+        jl a_end
+        mov eax, ecx
         jmp end
 
    b_min:
         cmp esi, ecx
         jl b_end
-        mov edi, ecx
+        mov eax, ecx
+        jmp end
+
+   a_end:
+        mov eax, edi
         jmp end
 
    b_end:
-        mov edi, esi
+        mov eax, esi
         jmp end
 
    end:
