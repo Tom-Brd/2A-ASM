@@ -12,30 +12,49 @@ extern find_max
 global main
 
 section .bss
-coordonnees:    resd    6
-
+;coordonnees:    resd    6
 
 section .data
+a:  db  2
+b:  db  3
+c:  db  4
+format: db  "Valeur : %d", 10, 0
 
 section .txt
 
 main:
 
-    mov r8d, 400 ;largeur de la fenêtre
-    mov edx, 0
-    mov esi, 0 ;compteur
 
-    boucle:
+    mov rdi, [a]
+    mov rsi, [b]
+    mov rcx, [c]
+    call find_min
 
-        mov edi, r8d
-        mov rax, 0
-        call rand
+    push rbp
 
-        mov dword[coordonnees + esi*DWORD], edx
+    mov rdi, format
+    mov rsi, eax
+    call printf
 
-        inc esi
-        cmp esi, 6
-        jne boucle
+
+    pop rbp
+
+
+    ;mov r8d, 400 ;largeur de la fenêtre
+    ;mov edx, 0
+    ;mov esi, 0 ;compteur
+
+    ;boucle:
+
+    ;    mov edi, r8d
+    ;    mov rax, 0
+    ;    call rand
+
+    ;    mov dword[coordonnees + esi*DWORD], edx
+
+    ;    inc esi
+    ;    cmp esi, 6
+    ;    jne boucle
 
 
     ;fin du programme
