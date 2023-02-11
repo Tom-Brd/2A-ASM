@@ -9,7 +9,7 @@ find_min:
    ja a_max
    jmp b_max
 
-   a_ax:
+   a_max:
         cmp edi, ecx
         ja end
         mov edi, ecx

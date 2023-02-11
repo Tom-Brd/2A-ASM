@@ -1,5 +1,8 @@
 extern printf
 extern scanf
+extern rand
+extern find_min
+extern find_max
 
 %define QWORD	8
 %define DWORD	4
