@@ -21,9 +21,6 @@ min_y:    resd    1
 max_y:    resd    1
 
 section .data
-a:  db  2
-b:  db  3
-c:  db  4
 format: db  "Valeur : %d", 0
 
 section .txt
@@ -34,21 +31,21 @@ main:
     ;;;;;;;;;;;;;REMPLIR LE TABLEAU COORDONNEES AVEC DES VALEURS ALÉATOIRES;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    ;mov r8d, 400 ;largeur de la fenêtre
-    ;mov edx, 0
-    ;mov esi, 0 ;compteur
+    mov r8d, 400 ;largeur de la fenêtre
+    mov edx, 0
+    mov esi, 0 ;compteur
 
-    ;boucle:
+    boucle:
 
-    ;    mov edi, r8d
-    ;    mov rax, 0
-    ;    call rand
+        mov edi, r8d
+        mov rax, 0
+        call rand
 
-    ;    mov dword[coordonnees + esi*DWORD], edx
+        mov dword[coordonnees + esi*DWORD], edx
 
-    ;    inc esi
-    ;    cmp esi, 6
-    ;    jne boucle
+        inc esi
+        cmp esi, 6
+        jne boucle
 
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,30 +53,32 @@ main:
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-    mov rdi, [a]
-    mov rsi, [b]
-    mov rcx, [c]
+    mov edi, dword[coordonnees + 0*DWORD]
+    mov esi, dword[coordonnees + 2*DWORD]
+    mov ecx, dword[coordonnees + 4*DWORD]
     call find_min
 
     push rbp
 
     mov rdi, format
-    movzx rsi, eax ; Dans eax, on est censé récupéré la valeur renvoyée par la fonction find_min
+    movzx rsi, byte[eax] ; Dans eax, on est censé récupérer la valeur renvoyée par la fonction find_min
     mov rax, 0
     call printf
+
+    pop rbp
 
     mov [min_x], eax ;on affecte la valeur minimum de x à la variable min_x
 
 
-    mov rdi, [a]
-    mov rsi, [b]
-    mov rcx, [c]
+    mov edi, dword[coordonnees + 0*DWORD]
+    mov esi, dword[coordonnees + 2*DWORD]
+    mov ecx, dword[coordonnees + 4*DWORD]
     call find_max
 
     push rbp
 
     mov rdi, format
-    movzx rsi, eax ; Dans eax, on est censé récupéré la valeur renvoyée par la fonction find_max
+    movzx rsi, byte[eax] ; Dans eax, on est censé récupéré la valeur renvoyée par la fonction find_max
     mov rax, 0
     call printf
 
@@ -93,19 +92,12 @@ main:
     ;;;;;;;;;;;;;;;;;;APPEL DE LA FONCTION VECTEURS_FROM_POINTS;;;;;;;;;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    movzx r10w, coordonnees[coordonnees + 0 * DWORD] ;Ax
-    movzx r11w, coordonnees[coordonnees + 1 * DWORD] ;Ay
-    movzx r12w, coordonnees[coordonnees + 2 * DWORD] ;Bx
-    movzx r13w, coordonnees[coordonnees + 3 * DWORD] ;By
-    movzx r14w, coordonnees[coordonnees + 4 * DWORD] ;Cx
-    movzx r15w, coordonnees[coordonnees + 5 * DWORD] ;Cy
-
-    mov rdi, r10w
-    mov rsi, r11w
-    mov rdx, r12w
-    mov rcx, r13w
-    mov r8, r14w
-    mov r9, r15w
+    mov r10d, dword[coordonnees + 0 * DWORD] ;Ax
+    mov r11d, dword[coordonnees + 1 * DWORD] ;Ay
+    mov r12d, dword[coordonnees + 2 * DWORD] ;Bx
+    mov r13d, dword[coordonnees + 3 * DWORD] ;By
+    mov r14d, dword[coordonnees + 4 * DWORD] ;Cx
+    mov r15d, dword[coordonnees + 5 * DWORD] ;Cy
     call vecteurs_from_points
 
 

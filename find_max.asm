@@ -1,5 +1,5 @@
 global find_max
-find_min:
+find_max:
 
    ; edi = a
    ; esi = b
