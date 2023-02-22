@@ -55,7 +55,7 @@ section .data
     compteur: db 0
     event:	times	24 dq 0
     compteur_triangles: db 0
-    colors: dq  0x0000FF, 0x00FF00, 0xFF0000, 0x2072FF, 0x19A97B, 0x37B812
+    colors: dq  0x0000FF, 0x00FF00, 0xFF0000, 0x2072FF, 0x19A97B, 0xc20072
 
 section .bss
     coordonnees:    resd    6
