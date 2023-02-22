@@ -350,6 +350,14 @@ direct:
     cmp dword[determinant], 0
     jl next_j_direct
 
+    xor rdx, rdx
+    xor r8, r8
+    movzx r8d, byte[compteur_triangles]
+    mov rdi,qword[display_name]
+    mov rsi,qword[gc]
+    mov rdx, qword[colors + r8d * QWORD]	; Couleur du crayon
+    call XSetForeground
+
     ; Dessine point
     mov rdi,qword[display_name]
     mov rsi,qword[window]
@@ -418,6 +426,14 @@ indirect:
 
     cmp dword[determinant], 0
     jge next_j_indirect
+
+    xor rdx, rdx
+    xor r8, r8
+    movzx r8d, byte[compteur_triangles]
+    mov rdi,qword[display_name]
+    mov rsi,qword[gc]
+    mov rdx, qword[colors + r8d * QWORD]	; Couleur du crayon
+    call XSetForeground
 
     ; Dessine point
     mov rdi,qword[display_name]
