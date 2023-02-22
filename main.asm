@@ -18,6 +18,10 @@ extern XNextEvent
 ;extern find_min
 extern printf
 extern exit
+; extern find_max
+; extern find_min
+; extern det_from_points
+; extern rand
 
 %define	StructureNotifyMask	131072
 %define KeyPressMask		1
@@ -87,16 +91,20 @@ rand:
     cmp byte[compteur], 6
     jge min_label
     
-    ;on génère un nombre aléatoire
-    xor eax, eax
-    rdrand eax
+    ;;;fonction rand
+    ; ;on génère un nombre aléatoire
+    ; xor eax, eax
+    ; rdrand eax
     
-    ;si rdrand n'a pas fonctionné, on recommence
-    jnc rand
+    ; ;si rdrand n'a pas fonctionné, on recommence
+    ; jnc rand
     
-    ;on remplit le tableau avec la valeur générée (modulo ebx)
-    xor edx, edx
-    div ebx
+    ; ;on remplit le tableau avec la valeur générée (modulo ebx)
+    ; xor edx, edx
+    ; div ebx
+
+
+    ;call rand      ;pas besoin d'argument normalement
     movzx r8d, byte[compteur]
     mov dword[coordonnees + r8d * DWORD], edx
 
