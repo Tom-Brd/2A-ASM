@@ -34,7 +34,7 @@ extern exit
 %define BYTE    1
 
 %define MAX 600
-%define MAX_TRIANGLES 4
+%define MAX_TRIANGLES 6
 
 section .data
 
@@ -55,7 +55,7 @@ section .data
     compteur: db 0
     event:	times	24 dq 0
     compteur_triangles: db 0
-    colors: dq  0x0000FF, 0x00FF00, 0xFF0000
+    colors: dq  0x0000FF, 0x00FF00, 0xFF0000, 0x2072FF, 0x19A97B, 0x37B812
 
 section .bss
     coordonnees:    resd    6
