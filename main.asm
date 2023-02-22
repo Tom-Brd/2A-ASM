@@ -250,48 +250,6 @@ max_label:
     pop rbp
 
 
-
-
-
-dessin:
-    ;couleur de la ligne 1
-    mov rdi,qword[display_name]
-    mov rsi,qword[gc]
-    mov edx,0x000000	; Couleur du crayon ; noir
-    call XSetForeground
-    
-    ; dessin de la ligne 1
-    mov rdi,qword[display_name]
-    mov rsi,qword[window]
-    mov rdx,qword[gc]
-    mov ecx,dword[coordonnees + 0 * DWORD]	; coordonnée source en x
-    mov r8d,dword[coordonnees + 1 * DWORD]	; coordonnée source en y
-    mov r9d,dword[coordonnees + 2 * DWORD]	; coordonnée destination en x
-    push qword[coordonnees + 3 * DWORD]		; coordonnée destination en y
-    call XDrawLine
-
-    ; dessin de la ligne 2
-    mov rdi,qword[display_name]
-    mov rsi,qword[window]
-    mov rdx,qword[gc]
-    mov ecx,dword[coordonnees + 2 * DWORD]	; coordonnée source en x
-    mov r8d,dword[coordonnees + 3 * DWORD]	; coordonnée source en y
-    mov r9d,dword[coordonnees + 4 * DWORD]	; coordonnée destination en x
-    push qword[coordonnees + 5 * DWORD]		; coordonnée destination en y
-    call XDrawLine
-
-    ; dessin de la ligne 3
-    mov rdi,qword[display_name]
-    mov rsi,qword[window]
-    mov rdx,qword[gc]
-    mov ecx,dword[coordonnees + 4 * DWORD]	; coordonnée source en x
-    mov r8d,dword[coordonnees + 5 * DWORD]	; coordonnée source en y
-    mov r9d,dword[coordonnees + 0 * DWORD]	; coordonnée destination en x
-    push qword[coordonnees + 1 * DWORD]		; coordonnée destination en y
-    call XDrawLine
-
-
-
     mov r8d, dword[min_x]
     mov dword[i], r8d
     mov r8d, dword[min_y]
@@ -301,11 +259,13 @@ dessin:
     jge indirect
 
 
+
+
 direct:
 
     mov r8d, dword[max_x]
     cmp dword[i], r8d
-    jge inc_triangle
+    jge dessin
 
     mov r9d, dword[max_y]
     cmp dword[j], r9d
@@ -382,7 +342,7 @@ direct:
 indirect:
     mov r8d, dword[max_x]
     cmp dword[i], r8d
-    jge inc_triangle
+    jge dessin
 
     mov r9d, dword[max_y]
     cmp dword[j], r9d
@@ -455,6 +415,43 @@ indirect:
         inc dword[j]
         jmp indirect
 
+
+dessin:
+    ;couleur de la ligne 1
+    mov rdi,qword[display_name]
+    mov rsi,qword[gc]
+    mov edx,0x000000	; Couleur du crayon ; noir
+    call XSetForeground
+    
+    ; dessin de la ligne 1
+    mov rdi,qword[display_name]
+    mov rsi,qword[window]
+    mov rdx,qword[gc]
+    mov ecx,dword[coordonnees + 0 * DWORD]	; coordonnée source en x
+    mov r8d,dword[coordonnees + 1 * DWORD]	; coordonnée source en y
+    mov r9d,dword[coordonnees + 2 * DWORD]	; coordonnée destination en x
+    push qword[coordonnees + 3 * DWORD]		; coordonnée destination en y
+    call XDrawLine
+
+    ; dessin de la ligne 2
+    mov rdi,qword[display_name]
+    mov rsi,qword[window]
+    mov rdx,qword[gc]
+    mov ecx,dword[coordonnees + 2 * DWORD]	; coordonnée source en x
+    mov r8d,dword[coordonnees + 3 * DWORD]	; coordonnée source en y
+    mov r9d,dword[coordonnees + 4 * DWORD]	; coordonnée destination en x
+    push qword[coordonnees + 5 * DWORD]		; coordonnée destination en y
+    call XDrawLine
+
+    ; dessin de la ligne 3
+    mov rdi,qword[display_name]
+    mov rsi,qword[window]
+    mov rdx,qword[gc]
+    mov ecx,dword[coordonnees + 4 * DWORD]	; coordonnée source en x
+    mov r8d,dword[coordonnees + 5 * DWORD]	; coordonnée source en y
+    mov r9d,dword[coordonnees + 0 * DWORD]	; coordonnée destination en x
+    push qword[coordonnees + 1 * DWORD]		; coordonnée destination en y
+    call XDrawLine
 
 inc_triangle:
     inc byte[compteur_triangles]
