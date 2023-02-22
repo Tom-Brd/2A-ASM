@@ -39,11 +39,14 @@ section .data
     format: db  10, "%d", 10, 0
     format_coord: db  "c %d", 9, 0
     format_det: db   10, "det: %d", 10, 0
+    format_i: db   10, "i: %d", 10, 0
+    format_j: db   10, "j: %d", 10, 0
     format_min_x: db   10, "min_x: %d", 10, 0
     format_min_y: db   10, "min_y: %d", 10, 0
     format_max_x: db   10, "max_x: %d", 10, 0
     format_max_y: db   10, "max_y: %d", 10, 0
     format_jaaj:    db   10, "jaaj", 10, 0
+    format_indirect:    db   10, "Il s'agit d'un trianglez uncuzqite", 10, 0
     compteur: db 0
     event:	times	24 dq 0
 
@@ -63,6 +66,9 @@ section .bss
     max_y:		resd	1
     determinant: resd    1
 
+    i: resd 1
+    j: resd 1
+
 section .text
 
 
@@ -72,7 +78,7 @@ main:
 ; # REMPLISSAGE DU TABLEAU DE COORDONNEES RANDOM #
 ; ################################################
 
-mov ebx, 400
+mov ebx, 300
 
 push rbp
 
@@ -191,8 +197,6 @@ vecteurs_label:
     call printf                                        
     pop rbp
 
-
-
 display:
 
     xor     rdi,rdi
@@ -304,7 +308,170 @@ dessin:
     push qword[coordonnees + 1 * DWORD]		; coordonnée destination en y
     call XDrawLine
 
-    jmp flush
+
+
+
+    mov r8d, dword[min_x]
+    mov dword[i], r8d
+    mov r8d, dword[min_y]
+    mov dword[j], r8d
+
+    cmp dword[determinant], 0
+    jge indirect
+
+direct:
+
+    mov r8d, dword[max_x]
+    cmp dword[i], r8d
+    jg flush
+
+    mov r9d, dword[max_y]
+    cmp dword[j], r9d
+    jg next_i_direct
+
+    mov r10d, dword[coordonnees + 2 * DWORD]
+    mov r11d, dword[coordonnees + 3 * DWORD]
+
+    mov r12d, dword[coordonnees + 0 * DWORD]
+    mov r13d, dword[coordonnees + 1 * DWORD]
+
+    mov r14d, dword[i]
+    mov r15d, dword[j]
+    call det_from_points
+
+    cmp dword[determinant], 0
+    jl next_j_direct
+
+    mov r10d, dword[coordonnees + 4 * DWORD]
+    mov r11d, dword[coordonnees + 5 * DWORD]
+
+    mov r12d, dword[coordonnees + 2 * DWORD]
+    mov r13d, dword[coordonnees + 3 * DWORD]
+
+    mov r14d, dword[i]
+    mov r15d, dword[j]
+    call det_from_points
+
+    cmp dword[determinant], 0
+    jl next_j_direct
+
+    mov r10d, dword[coordonnees + 0 * DWORD]
+    mov r11d, dword[coordonnees + 1 * DWORD]
+
+    mov r12d, dword[coordonnees + 4 * DWORD]
+    mov r13d, dword[coordonnees + 5 * DWORD]
+
+    mov r14d, dword[i]
+    mov r15d, dword[j]
+    call det_from_points
+
+    cmp dword[determinant], 0
+    jl next_j_direct
+
+    ; Dessine point
+
+    ; ;couleur du point 1
+    ; mov rdi,qword[display_name]
+    ; mov rsi,qword[gc]
+    ; mov edx,0x000000	; Couleur du crayon ; noir
+    ; call XSetForeground
+
+    ; Dessin d'un point noir : coordonnées (100,200)
+    mov rdi,qword[display_name]
+    mov rsi,qword[window]
+    mov rdx,qword[gc]
+    mov ecx,dword[i]	; coordonnée source en x
+    mov r8d,dword[j]	; coordonnée source en y
+    call XDrawPoint
+
+    jmp next_j_direct
+
+    next_i_direct:
+        mov r9d, dword[min_y]
+        mov dword[j], r9d
+        inc dword[i]
+        jmp direct
+
+    next_j_direct:
+        inc dword[j]
+        jmp direct
+
+
+indirect:
+    mov r8d, dword[max_x]
+    cmp dword[i], r8d
+    jg flush
+
+    mov r9d, dword[max_y]
+    cmp dword[j], r9d
+    jg next_i_indirect
+
+    mov r10d, dword[coordonnees + 2 * DWORD]
+    mov r11d, dword[coordonnees + 3 * DWORD]
+
+    mov r12d, dword[coordonnees + 0 * DWORD]
+    mov r13d, dword[coordonnees + 1 * DWORD]
+
+    mov r14d, dword[i]
+    mov r15d, dword[j]
+    call det_from_points
+
+    cmp dword[determinant], 0
+    jge next_j_indirect
+
+    mov r10d, dword[coordonnees + 4 * DWORD]
+    mov r11d, dword[coordonnees + 5 * DWORD]
+
+    mov r12d, dword[coordonnees + 2 * DWORD]
+    mov r13d, dword[coordonnees + 3 * DWORD]
+
+    mov r14d, dword[i]
+    mov r15d, dword[j]
+    call det_from_points
+
+    cmp dword[determinant], 0
+    jge next_j_indirect
+
+    mov r10d, dword[coordonnees + 0 * DWORD]
+    mov r11d, dword[coordonnees + 1 * DWORD]
+
+    mov r12d, dword[coordonnees + 4 * DWORD]
+    mov r13d, dword[coordonnees + 5 * DWORD]
+
+    mov r14d, dword[i]
+    mov r15d, dword[j]
+    call det_from_points
+
+    cmp dword[determinant], 0
+    jge next_j_indirect
+
+    ; Dessine point
+
+    ; ;couleur du point 1
+    ; mov rdi,qword[display_name]
+    ; mov rsi,qword[gc]
+    ; mov edx,0x000000	; Couleur du crayon ; noir
+    ; call XSetForeground
+
+    ; Dessin d'un point noir : coordonnées (100,200)
+    mov rdi,qword[display_name]
+    mov rsi,qword[window]
+    mov rdx,qword[gc]
+    mov ecx,dword[i]	; coordonnée source en x
+    mov r8d,dword[j]	; coordonnée source en y
+    call XDrawPoint
+
+    jmp next_j_indirect
+
+    next_i_indirect:
+        mov r9d, dword[min_y]
+        mov dword[j], r9d
+        inc dword[i]
+        jmp indirect
+
+    next_j_indirect:
+        inc dword[j]
+        jmp indirect
 
 flush:
     mov rdi,qword[display_name]
@@ -372,22 +539,22 @@ find_max:
 
    ; edi = a
    ; esi = b
-   ; ecx = c
+   ; edx = c
 
    cmp edi, esi
    ja a_max
    jmp b_max
 
-   a_max:
-        cmp edi, ecx
+   a_max: ; a > b
+        cmp edi, edx ; a > c
         ja max_a_end
-        mov eax, ecx
+        mov eax, edx ; c > a > b
         jmp max_end
 
-   b_max:
-        cmp esi, ecx
+   b_max:; b > a
+        cmp esi, edx ; b > c
         ja max_b_end
-        mov eax, ecx
+        mov eax, edx ; c > b > a
         jmp max_end
 
    max_a_end:
@@ -407,8 +574,6 @@ global det_from_points
 det_from_points:
     push rbp
     mov rbp, rsp
-
-
 
     ; r10d = Ax
     ; r11d = Ay
