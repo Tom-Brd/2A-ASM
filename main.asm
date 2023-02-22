@@ -18,10 +18,10 @@ extern XNextEvent
 ;extern find_min
 extern printf
 extern exit
-; extern find_max
-; extern find_min
-; extern det_from_points
-; extern rand
+extern find_max
+extern find_min
+extern det_from_points
+extern rand
 
 %define	StructureNotifyMask	131072
 %define KeyPressMask		1
@@ -104,7 +104,7 @@ rand:
     ; div ebx
 
 
-    ;call rand      ;pas besoin d'argument normalement
+    call rand      ;pas besoin d'argument normalement
     movzx r8d, byte[compteur]
     mov dword[coordonnees + r8d * DWORD], edx
 
@@ -500,112 +500,3 @@ mov rax, 60
 mov rdi, 0
 syscall
 ret
-
-
-global find_min
-find_min:
-    push rbp
-    mov rbp, rsp
-
-   ; edi = a
-   ; esi = b
-   ; edx = c
-
-   cmp edi, esi
-   jl a_min
-   jmp b_min
-
-   a_min:
-        cmp edi, edx
-        jl min_a_end
-        mov eax, edx
-        jmp min_end
-
-   b_min:
-        cmp esi, edx
-        jl min_b_end
-        mov eax, edx
-        jmp min_end
-
-   min_a_end:
-        mov eax, edi
-        jmp min_end
-
-   min_b_end:
-        mov eax, esi
-        jmp min_end
-
-   min_end:
-
-        leave
-        ret
-
-global find_max
-find_max:
-    push rbp
-    mov rbp, rsp
-
-   ; edi = a
-   ; esi = b
-   ; edx = c
-
-   cmp edi, esi
-   ja a_max
-   jmp b_max
-
-   a_max: ; a > b
-        cmp edi, edx ; a > c
-        ja max_a_end
-        mov eax, edx ; c > a > b
-        jmp max_end
-
-   b_max:; b > a
-        cmp esi, edx ; b > c
-        ja max_b_end
-        mov eax, edx ; c > b > a
-        jmp max_end
-
-   max_a_end:
-        mov eax, edi
-        jmp max_end
-
-   max_b_end:
-        mov eax, esi
-        jmp max_end
-
-   max_end:
-        leave
-        ret
-
-
-global det_from_points
-det_from_points:
-    push rbp
-    mov rbp, rsp
-
-    ; r10d = Ax
-    ; r11d = Ay
-    ; r12d = Bx
-    ; r13d = By
-    ; r14d = Cx
-    ; r15d = Cy
-
-    ; BA
-    sub r10d, r12d ;
-    sub r11d, r13d ;
-
-    ; BC
-    sub r14d, r12d ;
-    sub r15d, r13d ;
-
-    mov eax, r10d
-    mov ebx, r15d
-    imul ebx
-    mov [determinant], eax
-    mov eax, r14d
-    mov ebx, r11d
-    imul ebx
-    sub dword[determinant], eax
-
-    leave
-    ret
