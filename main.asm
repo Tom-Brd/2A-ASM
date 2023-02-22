@@ -38,10 +38,10 @@ section .data
 
     format: db  10, "%d", 0
     format_coord: db  "c %d", 9, 0
-    amin:    db   10, "amin %d", 0
-    bmin:    db   10, "bmin %d", 0
     format_min_x: db   10, "min_x: %d",10, 0
     format_min_y: db   10, "min_y: %d",10, 0
+    format_max_x: db   10, "max_x: %d",10, 0
+    format_max_y: db   10, "max_y: %d",10, 0
     format_jaaj:    db   10, "jaaj", 0
     compteur: db 0
     event:	times	24 dq 0
@@ -58,6 +58,8 @@ section .bss
     gc:		resq	1
     min_x:		resd	1
     min_y:		resd	1
+    max_x:		resd	1
+    max_y:		resd	1
 
 section .text
 
@@ -109,12 +111,7 @@ rand:
 min_label:
 
     push rbp
-
-    mov edi, 0
-    mov esi, 0
-    mov edx, 0
-
-
+    ; min x
     mov edi, dword[coordonnees + 0 * DWORD]
     mov esi, dword[coordonnees + 2 * DWORD]
     mov edx, dword[coordonnees + 4 * DWORD]
@@ -125,7 +122,7 @@ min_label:
     mov rax, 0
     call printf
 
-    
+    ; min y
     mov edi, dword[coordonnees + 1 * DWORD]
     mov esi, dword[coordonnees + 3 * DWORD]
     mov edx, dword[coordonnees + 5 * DWORD]
@@ -133,6 +130,34 @@ min_label:
     mov rdi, format_min_y
     mov dword[min_y], eax
     mov esi, dword[min_y]
+    mov rax, 0
+    call printf
+
+    pop rbp
+
+
+max_label:
+
+    push rbp
+
+    mov edi, dword[coordonnees + 0 * DWORD]
+    mov esi, dword[coordonnees + 2 * DWORD]
+    mov edx, dword[coordonnees + 4 * DWORD]
+    call find_max
+    mov rdi, format_max_x
+    mov dword[max_x], eax
+    mov esi, dword[max_x]
+    mov rax, 0
+    call printf
+
+    
+    mov edi, dword[coordonnees + 1 * DWORD]
+    mov esi, dword[coordonnees + 3 * DWORD]
+    mov edx, dword[coordonnees + 5 * DWORD]
+    call find_max
+    mov rdi, format_max_y
+    mov dword[max_y], eax
+    mov esi, dword[max_y]
     mov rax, 0
     call printf
 
@@ -290,25 +315,62 @@ find_min:
 
    a_min:
         cmp edi, edx
-        jl a_end
+        jl min_a_end
         mov eax, edx
-        jmp end
+        jmp min_end
 
    b_min:
         cmp esi, edx
-        jl b_end
+        jl min_b_end
         mov eax, edx
-        jmp end
+        jmp min_end
 
-   a_end:
+   min_a_end:
         mov eax, edi
-        jmp end
+        jmp min_end
 
-   b_end:
+   min_b_end:
         mov eax, esi
-        jmp end
+        jmp min_end
 
-   end:
+   min_end:
 
+        leave
+        ret
+
+global find_max
+find_max:
+    push rbp
+    mov rbp, rsp
+
+   ; edi = a
+   ; esi = b
+   ; ecx = c
+
+   cmp edi, esi
+   ja a_max
+   jmp b_max
+
+   a_max:
+        cmp edi, ecx
+        ja max_a_end
+        mov eax, ecx
+        jmp max_end
+
+   b_max:
+        cmp esi, ecx
+        ja max_b_end
+        mov eax, ecx
+        jmp max_end
+
+   max_a_end:
+        mov eax, edi
+        jmp max_end
+
+   max_b_end:
+        mov eax, esi
+        jmp max_end
+
+   max_end:
         leave
         ret
