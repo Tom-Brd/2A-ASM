@@ -4,7 +4,7 @@ section .bss
 
 section .text
 
-  global vecteurs_from_points
+global vecteurs_from_points
 
 vecteurs_from_points:
   
