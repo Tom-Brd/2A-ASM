@@ -15,7 +15,6 @@ extern XFillArc
 extern XNextEvent
 
 ; external functions from stdio library (ld-linux-x86-64.so.2)
-;extern find_min
 extern printf
 extern exit
 
@@ -35,7 +34,7 @@ extern exit
 %define BYTE    1
 
 %define MAX 600
-%define MAX_TRIANGLES 3
+%define MAX_TRIANGLES 4
 
 section .data
 
@@ -50,6 +49,7 @@ section .data
     format_max_y: db   10, "max_y: %d", 10, 0
     format_triangles: db   10, "compteur_triangles: %d", 10, 0
     format_couleur: db   10, "couleur : %x", 10, 0
+    format_event: db   10, "event : %d", 10, 0
     format_jaaj:    db   10, "jaaj", 10, 0
     format_indirect:    db   10, "Il s'agit d'un trianglez uncuzqite", 10, 0
     compteur: db 0
@@ -134,8 +134,15 @@ boucle: ; boucle de gestion des évènements
     mov rsi,event
     call XNextEvent
 
+    push rbp
+    mov rdi, format_event
+    mov esi, dword[event]
+    mov rax, 0
+    call printf
+    pop rbp
+
     cmp dword[event],ConfigureNotify	; à l'apparition de la fenêtre
-    je dessin							; on saute au label 'dessin'
+    je rand							; on saute au label 'rand'
 
     cmp dword[event],KeyPress			; Si on appuie sur une touche
     je closeDisplay						; on saute au label 'closeDisplay' qui ferme la fenêtre
@@ -143,14 +150,11 @@ boucle: ; boucle de gestion des évènements
 
 
 
-
-
-
 rand:
 
     mov r8b, MAX_TRIANGLES
     cmp byte[compteur_triangles], r8b
-    jg flush
+    jge flush
 
     ;on vérifie que le tableau n'est pas totalement rempli
     cmp byte[compteur], 6
