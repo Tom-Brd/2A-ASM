@@ -38,6 +38,7 @@ section .data
 
     format: db  10, "%d", 10, 0
     format_coord: db  "c %d", 9, 0
+    format_det: db   10, "det: %d", 10, 0
     format_min_x: db   10, "min_x: %d", 10, 0
     format_min_y: db   10, "min_y: %d", 10, 0
     format_max_x: db   10, "max_x: %d", 10, 0
@@ -60,7 +61,7 @@ section .bss
     min_y:		resd	1
     max_x:		resd	1
     max_y:		resd	1
-    vecteurs: resd    4
+    determinant: resd    1
 
 section .text
 
@@ -181,29 +182,14 @@ vecteurs_label:
     
     mov r14d, dword[coordonnees + 4 * DWORD]
     mov r15d, dword[coordonnees + 5 * DWORD]
-    call vecteurs_from_points
+    call det_from_points
 
-    mov byte[compteur], 0
-
-    boucle_tah_affiche:
-        
-
-        ;on vérifie que le tableau n'est pas totalement rempli
-        cmp byte[compteur], 4
-        jge display
-
-        movzx r8d, byte[compteur]
-        ;on affiche la valeur
-        mov rdi, format
-        mov esi, dword[vecteurs + r8d * DWORD]
-        mov rax, 0
-        call printf
-
-        ;on passe à l'index suivant
-        inc byte[compteur]
-    jmp boucle_tah_affiche      
-                                                                
-        
+    push rbp
+    mov rdi, format_det
+    mov esi, dword[determinant]
+    mov rax, 0
+    call printf                                        
+    pop rbp
 
 
 
@@ -417,8 +403,8 @@ find_max:
         ret
 
 
-global vecteurs_from_points
-vecteurs_from_points:
+global det_from_points
+det_from_points:
     push rbp
     mov rbp, rsp
 
@@ -432,22 +418,21 @@ vecteurs_from_points:
     ; r15d = Cy
 
     ; BA
-    sub r12d, r10d ;
-    sub r13d, r11d ;
-
-
-
-    mov [vecteurs], r12d ; vecteurs[0] = BA.x
-    mov [vecteurs + 4], r13d ; vecteurs[1] = BA.y
+    sub r10d, r12d ;
+    sub r11d, r13d ;
 
     ; BC
-    sub r12d, r14d ;
-    sub r13d, r15d ;
+    sub r14d, r12d ;
+    sub r15d, r13d ;
 
-
-
-    mov [vecteurs + 8], r12d ; vecteurs[2] = BC.x
-    mov [vecteurs + 12], r13d ; vecteurs[3] = BC.y
+    mov eax, r10d
+    mov ebx, r15d
+    imul ebx
+    mov [determinant], eax
+    mov eax, r14d
+    mov ebx, r11d
+    imul ebx
+    sub dword[determinant], eax
 
     leave
     ret
