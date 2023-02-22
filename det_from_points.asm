@@ -21,11 +21,11 @@ det_from_points:
     mov eax, r10d
     mov ebx, r15d
     imul ebx
-    mov [determinant], eax
+    mov edi, eax
     mov eax, r14d
     mov ebx, r11d
     imul ebx
-    sub dword[determinant], eax
+    sub edi, eax
 
     leave
     ret

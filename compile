@@ -4,4 +4,4 @@ nasm -felf64 -Fdwarf -g -l find_min.lst find_min.asm -o find_min.o &&
 nasm -felf64 -Fdwarf -g -l rand.lst rand.asm -o rand.o && 
 nasm -felf64 -Fdwarf -g -l det_from_points.lst det_from_points.asm -o det_from_points.o &&
 nasm -felf64 -Fdwarf -g -l main.lst main.asm -o main.o &&
-gcc -fPIC -no-pie find_min.o find_max.o rand.o det_from_points.o main.o -o final -g
+gcc -fPIC -fno-pie -no-pie find_min.o find_max.o rand.o det_from_points.o main.o -o final -g --for-linker /lib64/ld-linux-x86-64.so.2 -lX11
