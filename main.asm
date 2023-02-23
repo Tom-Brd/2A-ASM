@@ -166,16 +166,16 @@ rand:
     mov dword[coordonnees + r8d * DWORD], edx
 
     ;on affiche la valeur
+    push rbp
     mov rdi, format_coord
     mov esi, dword[coordonnees + r8d * DWORD]
     mov rax, 0
     call printf
+    pop rbp
 
     ;on passe à l'index suivant
     inc byte[compteur]
     jmp rand
-
-    pop rbp
     
 
 min_label:
@@ -208,29 +208,31 @@ min_label:
 
 max_label:
     mov byte[compteur], 0
-    push rbp
 
     mov edi, dword[coordonnees + 0 * DWORD]
     mov esi, dword[coordonnees + 2 * DWORD]
     mov edx, dword[coordonnees + 4 * DWORD]
     call find_max
+    push rbp
     mov rdi, format_max_x
     mov dword[max_x], eax
     mov esi, dword[max_x]
     mov rax, 0
     call printf
+    pop rbp
 
     mov edi, dword[coordonnees + 1 * DWORD]
     mov esi, dword[coordonnees + 3 * DWORD]
     mov edx, dword[coordonnees + 5 * DWORD]
     call find_max
+    push rbp
     mov rdi, format_max_y
     mov dword[max_y], eax
     mov esi, dword[max_y]
     mov rax, 0
     call printf
-
     pop rbp
+
 
     mov r10d, dword[coordonnees + 0 * DWORD]
     mov r11d, dword[coordonnees + 1 * DWORD]
@@ -483,6 +485,7 @@ global find_min
 find_min:
     push rbp
     mov rbp, rsp
+    xor eax, eax
 
    ; edi = a
    ; esi = b
@@ -521,6 +524,7 @@ global find_max
 find_max:
     push rbp
     mov rbp, rsp
+    xor eax, eax
 
    ; edi = a
    ; esi = b
